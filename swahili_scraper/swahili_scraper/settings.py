@@ -100,4 +100,31 @@ DOWNLOADER_MIDDLEWARES = {
 
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 
+# Concurrency settings
+CONCURRENT_REQUESTS = 32
+PLAYWRIGHT_MAX_CONTEXTS = 8
+PLAYWRIGHT_MAX_PAGES_PER_CONTEXT = 8
+AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_START_DELAY = 1
+AUTOTHROTTLE_MAX_DELAY = 60
+AUTOTHROTTLE_TARGET_CONCURRENCY = 2.0
+AUTOTHROTTLE_DEBUG = False
+
+# Pipelines
+ITEM_PIPELINES = {
+    'swahili_scraper.pipelines.MongoDBPipeline': 300,
+    'swahili_scraper.pipelines.KafkaPipeline': 400,
+}
+
+
+'''
+# MongoDB settings
+MONGO_URI = 'mongodb://your_mongodb_uri'
+MONGO_DATABASE = 'your_database'
+
+# Kafka settings
+KAFKA_SERVER = 'localhost:9092'
+KAFKA_TOPIC = 'scrapy_items'
+
+'''
 
