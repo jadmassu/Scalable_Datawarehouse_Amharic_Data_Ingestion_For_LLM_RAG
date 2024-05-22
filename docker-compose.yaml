@@ -328,6 +328,35 @@ services:
     networks:
       - data-network
 
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    ports:
+      - "2181:2181"
+
+  faust:
+    build:
+      context: .
+      dockerfile: Dockerfile.faust
+    environment:
+      - KAFKA_BROKER=kafka:9092
+      - FAUST_APP_ID=data_stream_app
+      - FAUST_STORE=rocksdb://
+    depends_on:
+      - kafka
+    networks:
+      - data-network
+
+
 networks:
   data-network:
     driver: bridge
