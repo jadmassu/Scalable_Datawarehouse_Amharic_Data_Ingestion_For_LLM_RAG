@@ -283,6 +283,55 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+  
+  datacollection:
+    build:
+      context: .
+      dockerfile: Dockerfile.collection
+    volumes:
+      - ./data:/data
+    environment:
+      - DATA_DIR=${DATA_DIR}
+    networks:
+      - data-network
+
+  datacleaning:
+    build:
+      context: .
+      dockerfile: Dockerfile.cleaning
+    volumes:
+      - ./data:/data
+    environment:
+      - DATA_DIR=${DATA_DIR}
+    networks:
+      - data-network
+
+  dataprocessing:
+    build:
+      context: .
+      dockerfile: Dockerfile.processing
+    volumes:
+      - ./data:/data
+    environment:
+      - DATA_DIR=${DATA_DIR}
+    networks:
+      - data-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "5000:5000"
+    environment:
+      - DATA_DIR=${DATA_DIR}
+    networks:
+      - data-network
+
+networks:
+  data-network:
+    driver: bridge
 
 volumes:
   postgres-db-volume:
+
