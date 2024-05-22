@@ -126,5 +126,12 @@ MONGO_DATABASE = 'your_database'
 KAFKA_SERVER = 'localhost:9092'
 KAFKA_TOPIC = 'scrapy_items'
 
+# User agents for RandomUserAgentMiddleware
+USER_AGENTS = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3', 
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15',
+    # Add more user agents here
+]
+
 '''
 

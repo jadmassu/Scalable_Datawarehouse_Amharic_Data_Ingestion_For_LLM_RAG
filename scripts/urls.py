@@ -9,10 +9,7 @@ url_categories = [
         
         ],
     
-    # Entertainment
-    ["https://entertainment.example.com/page1", "https://entertainment.example.com/page2"],
-    
-    # Sports
+        # Sports
     '''
     [
         #BBC Swahili News
@@ -47,10 +44,7 @@ url_categories = [
      ]
     '''
     
-    #Political
-    [" ", ]
-    
-    #General-Habari leo
+        #General-Habari leo
     [
         "https://habarileo.co.tz/",
         "https://habarileo.co.tz/category/tanzania/",
@@ -75,4 +69,29 @@ url_categories = [
         "https://www.voaswahili.com/https-www-voaswahili-com-z-7854",
         ""
     ]
+    
+       # Others
+   [
+       "https://www.itv.co.tz/news",
+       ] 
+    
+    # Social Media
+    [
+        "https://www.facebook.com/itvtz/",
+       "https://x.com/itvtanzania?lang=en",
+       "https://www.instagram.com/itvtz/"
+    ]
+    
+    # Books
+    
+    # PDFs
+    
+
+    
+    #Political
+    [" ", ]
+    
+
+    
+
 ]
