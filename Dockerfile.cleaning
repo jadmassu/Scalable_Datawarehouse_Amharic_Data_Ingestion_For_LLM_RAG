@@ -5,6 +5,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY src/collect_data.py .
+COPY src/clean_data.py .
 
-CMD ["python", "collect_data.py"]
+CMD ["python", "clean_data.py"]
