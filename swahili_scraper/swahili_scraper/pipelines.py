@@ -9,6 +9,7 @@ import motor.motor_asyncio
 from kafka import KafkaProducer
 import json
 import asyncio
+import pymongo
 from scrapy.utils.project import get_project_settings
 
 class MongoDBPipeline:
@@ -32,25 +33,26 @@ class MongoDBPipeline:
         return item
 
 class KafkaPipeline:
-    def __init__(self):
-        settings = get_project_settings()
-        self.kafka_server = settings.get('KAFKA_SERVER')
-        self.topic = settings.get('KAFKA_TOPIC')
+    def __init__(self, kafka_server, kafka_topic):
+        self.kafka_server = kafka_server
+        self.kafka_topic = kafka_topic
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            kafka_server=crawler.settings.get('KAFKA_SERVER'),
+            kafka_topic=crawler.settings.get('KAFKA_TOPIC'),
+        )
+
+    def open_spider(self, spider):
         self.producer = KafkaProducer(
             bootstrap_servers=self.kafka_server,
             value_serializer=lambda v: json.dumps(v).encode('utf-8')
         )
 
-    async def process_item(self, item, spider):
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(
-            None,
-            self.producer.send,
-            self.topic,
-            item
-        )
-        return item
-
     def close_spider(self, spider):
-        self.producer.flush()
         self.producer.close()
+
+    def process_item(self, item, spider):
+        self.producer.send(self.kafka_topic, dict(item))
+        return item
