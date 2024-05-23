@@ -197,7 +197,7 @@ services:
       DB_PORT: ${DB_PORT}
       NEWS_SCRAPER_URL: ${NEWS_SCRAPER_URL}
     depends_on:
-      - db
+      - postgres
     networks:
       - airflow
 
