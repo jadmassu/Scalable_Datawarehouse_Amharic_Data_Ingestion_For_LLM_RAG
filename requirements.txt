@@ -8,4 +8,5 @@ apache-airflow
 fastapi
 sqlalchemy
 python-dotenv
+pydantic
 
