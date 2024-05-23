@@ -10,9 +10,9 @@ class Data(faust.Record, serializer='json'):
     id: int
     value: str
 
-topic = app.topic('data-topic', value_type=Data)
+topic = app.topic('data-topic', value_type=Data) # Information needed here: Data type being passed, 
 
-@app.agent(topic)
+@app.agent(topic) #Decorator to define async stream processor
 async def process(stream):
     async for event in stream:
         print(f'Received: {event}')
