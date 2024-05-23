@@ -1,3 +1,12 @@
-apache-airflow==2.3.0
-faust
-locust
+selenium
+webdriver-manager
+pandas
+SQLAlchemy
+psycopg2-binary
+beautifulsoup4
+apache-airflow
+fastapi
+sqlalchemy
+python-dotenv
+pydantic
+
