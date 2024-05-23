@@ -1,52 +1,59 @@
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
-from datetime import datetime
-from config.config import AIRFLOW_CONFIG
-from utils.common import setup_logging, log_execution
-
-setup_logging()
-
-def data_collection(*args, **kwargs):
-    # Implementation of data collection logic
-    pass
-
-def data_cleaning(*args, **kwargs):
-    # Implementation of data cleaning logic
-    pass
-
-def data_processing(*args, **kwargs):
-    # Implementation of data processing logic
-    pass
+from datetime import datetime, timedelta
+from airflow.models import Variable
+from db.connection.db_conn import DatabaseLoader
+from models.base import Database
+from sqlalchemy.orm import sessionmaker
+from scrapers.alain import AlainNewsScraper
+from controllers.data_controller import create_data
+import os
 
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime.strptime(AIRFLOW_CONFIG['start_date'], '%Y-%m-%d'),
+    'start_date': datetime(2024, 5, 1),
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
 }
 
-with DAG(
-    AIRFLOW_CONFIG['dag_id'],
-    default_args=default_args,
-    schedule_interval=AIRFLOW_CONFIG['schedule_interval'],
-    catchup=False
-) as dag:
+# Initialize database connection
+db_loader = DatabaseLoader()
+db_loader.set_connection_url_from_dbname(Variable.get("db_database"))
+db_loader.connect()
+SessionLocal = sessionmaker(bind=db_loader.engine)
 
-    collect_task = PythonOperator(
-        task_id='collect_data',
-        python_callable=log_execution(data_collection)
+def scrape_news(url):
+    scraper = AlainNewsScraper(url=url)
+    news_data = scraper.get_full_news()
+    return news_data
+
+def save_to_database(news_data):
+    session = SessionLocal()
+    try:
+        for article in news_data:
+            db_data = create_data(session, article)
+            session.add(db_data)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        raise e
+    finally:
+        session.close()
+
+with DAG('news_pipeline', default_args=default_args, schedule_interval='@daily') as dag:
+    scrape_task = PythonOperator(
+        task_id='scrape_news_task',
+        python_callable=scrape_news,
+        op_kwargs={'url': Variable.get("news_scraper_url")}
     )
 
-    clean_task = PythonOperator(
-        task_id='clean_data',
-        python_callable=log_execution(data_cleaning)
+    save_to_db_task = PythonOperator(
+        task_id='save_to_db_task',
+        python_callable=save_to_database,
+        op_kwargs={'news_data': "{{ task_instance.xcom_pull(task_ids='scrape_news_task') }}"}
     )
 
-    process_task = PythonOperator(
-        task_id='process_data',
-        python_callable=log_execution(data_processing)
-    )
+    scrape_task >> save_to_db_task
 
-    collect_task >> clean_task >> process_task
