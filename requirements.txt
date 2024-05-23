@@ -5,3 +5,6 @@ SQLAlchemy
 psycopg2-binary
 beautifulsoup4
 apache-airflow
+fastapi
+sqlalchemy
+python-dotenv
