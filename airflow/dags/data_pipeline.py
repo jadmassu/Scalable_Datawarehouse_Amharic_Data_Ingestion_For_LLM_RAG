@@ -1,12 +1,12 @@
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 from airflow.models import Variable
 from db.connection.db_conn import DatabaseLoader
 from models.base import Database
 from sqlalchemy.orm import sessionmaker
-from scrapers.alain import AlainNewsScraper
-from controllers.data_controller import create_data
+from scrapper.news_sites.alain import AlainNewsScraper
+from api.controllers.data_controller import create_data
 import os
 
 default_args = {
