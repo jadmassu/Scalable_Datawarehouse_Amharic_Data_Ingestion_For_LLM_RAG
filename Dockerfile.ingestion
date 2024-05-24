@@ -1,12 +1,9 @@
 
-# Use an official Python runtime as a parent image
 FROM python:3.10-slim
 
-# Set environment variables
-ENV AIRFLOW_HOME=/usr/local/airflow
-
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
     default-libmysqlclient-dev \
@@ -14,8 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     xvfb \
     libxi6 \
-    libgconf-2-4 \
-    && rm -rf /var/lib/apt/lists/*
+    libgconf-2-4
 
 # Install Chrome and ChromeDriver
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
@@ -26,16 +22,26 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
     unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/ && \
     rm /tmp/chromedriver.zip
 
-# Set up Airflow
-RUN pip install apache-airflow
+# Set environment variables
+ENV PYTHONUNBUFFERED 1
+ENV CHROME_DRIVER_PATH /usr/local/bin/chromedriver
 
-# Copy the DAGs and test files into the Docker image
-COPY dags /usr/local/airflow/dags
-COPY tests /usr/local/airflow/tests
+# Create and set working directory
+RUN mkdir /app
+WORKDIR /app
 
-# Set the working directory
-WORKDIR /usr/local/airflow
+# Copy requirements and install dependencies
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Run the tests
-CMD ["python", "-m", "unittest", "tests.test_data_pipeline"]
+# Copy the application code
+COPY . /app
+
+# Expose necessary ports (if any)
+EXPOSE 8080
+
+# Set the entrypoint
+ENTRYPOINT ["python"]
+CMD ["dags/news_pipeline.py"]
+
 
