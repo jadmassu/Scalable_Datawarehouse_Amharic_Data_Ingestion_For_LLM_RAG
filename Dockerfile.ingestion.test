@@ -1,7 +1,10 @@
-# Use a Python image for testing
-FROM python:3.10-slim AS test
+# Use an official Python runtime as the base image
+FROM python:3.10-slim
 
-# Install system dependencies required for testing
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+
+# Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
@@ -11,32 +14,41 @@ RUN apt-get update && \
     unzip \
     xvfb \
     libxi6 \
-    libgconf-2-4 && \
-    rm -rf /var/lib/apt/lists/*
+    libgconf-2-4
 
-# Install Chrome and ChromeDriver for testing (if required)
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
-    apt-get update && \
-    apt-get install -y google-chrome-stable && \
+# Install gnupg
+RUN apt-get install -y gnupg
+
+# Add Google Chrome repository key
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+
+# Add Google Chrome repository to sources list
+RUN sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+
+# Update package lists after modifying sources list
+RUN apt-get update
+
+# Install Chrome and ChromeDriver
+RUN apt-get install -y google-chrome-stable && \
     wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip && \
     unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
-    rm /tmp/chromedriver.zip && \
-    rm -rf /var/lib/apt/lists/*
+    rm /tmp/chromedriver.zip
 
 # Set environment variables
-ENV PYTHONUNBUFFERED=1
 ENV CHROME_DRIVER_PATH=/usr/local/bin/chromedriver
 
-# Set working directory
+# Create and set working directory
 WORKDIR /app
 
 # Copy requirements for testing
 COPY requirements.txt /app/requirements.txt
+
+# Install testing dependencies
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Copy the application and test files
-COPY scalable_data_warehouse/ /app/scalable_data_warehouse/
+# Copy the application code
+COPY . /app
 
-# Run tests
-CMD ["pytest", "scalable_data_warehouse/airflow/tests/"]
+# Run the tests
+CMD ["python", "-m", "unittest", "discover", "-s", "scalable_data_warehouse/airflow/tests", "-p", "test_*.py"]
+
