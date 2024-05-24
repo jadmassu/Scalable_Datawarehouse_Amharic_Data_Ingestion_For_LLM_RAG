@@ -11,7 +11,8 @@ RUN apt-get update && \
     unzip \
     xvfb \
     libxi6 \
-    libgconf-2-4
+    libgconf-2-4 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Chrome and ChromeDriver for testing (if required)
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
@@ -19,22 +20,23 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
     apt-get update && \
     apt-get install -y google-chrome-stable && \
     wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip && \
-    unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/ && \
-    rm /tmp/chromedriver.zip
+    unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
+    rm /tmp/chromedriver.zip && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set environment variables
-ENV PYTHONUNBUFFERED 1
-ENV CHROME_DRIVER_PATH /usr/local/bin/chromedriver
+ENV PYTHONUNBUFFERED=1
+ENV CHROME_DRIVER_PATH=/usr/local/bin/chromedriver
 
 # Set working directory
 WORKDIR /app
 
 # Copy requirements for testing
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-# Copy the test files
-COPY scalable_data_warehouse/ scalable_data_warehouse/
+# Copy the application and test files
+COPY scalable_data_warehouse/ /app/scalable_data_warehouse/
 
 # Run tests
 CMD ["pytest", "scalable_data_warehouse/airflow/tests/"]
