@@ -197,6 +197,16 @@ services:
       DB_PORT: ${DB_PORT}
       NEWS_SCRAPER_URL: ${NEWS_SCRAPER_URL}
     depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - airflow
+
+  ingestion-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.ingestion.test
+    depends_on:
       - postgres
     networks:
       - airflow
