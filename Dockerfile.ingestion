@@ -40,7 +40,7 @@ COPY . /app
 # Expose necessary ports (if any)
 EXPOSE 8080
 
-# Set the entrypoint
-ENTRYPOINT ["python"]
-CMD ["dags/news_pipeline.py"]
+# Set the entrypoint for running tests
+ENTRYPOINT ["pytest"]
+
 
