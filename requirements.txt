@@ -9,4 +9,7 @@ fastapi
 sqlalchemy
 python-dotenv
 pydantic
+pytest
+pytest-mock
+
 
