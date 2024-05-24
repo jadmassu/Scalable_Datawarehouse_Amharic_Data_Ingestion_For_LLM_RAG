@@ -1,7 +1,7 @@
 import unittest
 from airflow.models import DagBag, TaskInstance
 from airflow.utils import timezone
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from airflow.dags.data_pipeline import save_to_database, scrape_news
 from airflow.utils.dag_cycle_tester import test_cycle
 
@@ -44,13 +44,13 @@ class TestIntegration(unittest.TestCase):
         dagbag = DagBag(include_examples=False)
         dag = dagbag.get_dag('news_pipeline')
         ti = TaskInstance(task=dag.get_task('save_to_db_task'), execution_date=timezone.utcnow())
-        ti.xcom_pull = lambda key: mocked_news_data
+        ti.xcom_pull = MagicMock(return_value=mocked_news_data)
 
         # Call the function under test
-        save_to_database(ti.xcom_pull(None))
+        save_to_database(news_data=ti.xcom_pull())
 
         # Assert that save_to_database was called with the correct data
-        mock_save_to_database.assert_called_once_with(mocked_news_data)
+        mock_save_to_database.assert_called_once_with(news_data=mocked_news_data)
         
 class TestEndToEndPipeline(unittest.TestCase):
     @patch('airflow.dags.data_pipeline.save_to_database')
@@ -72,11 +72,11 @@ class TestEndToEndPipeline(unittest.TestCase):
         save_to_db_task_instance = TaskInstance(task=dag.get_task('save_to_db_task'), execution_date=timezone.utcnow())
 
         # Run the task instances
-        scrape_task_instance.run()
+        scrape_task_instance.run(ignore_ti_state=True)
         save_to_db_task_instance.run(ignore_ti_state=True)
 
         # Assert that save_to_database was called with the correct data
-        mock_save_to_database.assert_called_once_with(mocked_news_data)
+        mock_save_to_database.assert_called_once_with(news_data=mocked_news_data)
 
 
 if __name__ == '__main__':
