@@ -27,7 +27,6 @@ ENV PYTHONUNBUFFERED 1
 ENV CHROME_DRIVER_PATH /usr/local/bin/chromedriver
 
 # Create and set working directory
-RUN mkdir /app
 WORKDIR /app
 
 # Copy requirements and install dependencies
@@ -42,6 +41,7 @@ EXPOSE 8080
 
 # Set the entrypoint
 ENTRYPOINT ["python"]
-CMD ["dags/news_pipeline.py"]
+CMD ["airflow/dags/data_pipeline.py"]
+
 
 
