@@ -1,0 +1,6 @@
+__pycache__/
+.env 
+nlp/**
+.env
+data/clean/cleaned_data.csv
+/venv
