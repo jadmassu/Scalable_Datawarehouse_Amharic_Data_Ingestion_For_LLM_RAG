@@ -177,10 +177,3 @@ logs/**/*.log
 .history/*.log
 
 logs/
-
-logs/*.log
-logs/scheduler/*.log
-logs/scheduler/2024-05-26/*.log
-logs/scheduler/2024-05-26/native_dags/example_dags/*.log
-logs/scheduler/2024-05-26/native_dags/example_dags/plugins/*.log
-logs/scheduler/2024-05-26/native_dags/example_dags/subdags/*.log

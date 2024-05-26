@@ -1,6 +1,9 @@
 __pycache__/
+.env 
 nlp/**
+.env
 data/clean/cleaned_data.csv
+/venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -163,24 +166,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-
-# Ignore all files with .log extension
-*.log
-
-# Ignore specific log files
-logfile.log
-
-# Ignore log files in a specific directory
-# Ignore log files
-logs/**/*.log
-
-.history/*.log
+Data/
 
 logs/
-
-logs/*.log
-logs/scheduler/*.log
-logs/scheduler/2024-05-26/*.log
-logs/scheduler/2024-05-26/native_dags/example_dags/*.log
-logs/scheduler/2024-05-26/native_dags/example_dags/plugins/*.log
-logs/scheduler/2024-05-26/native_dags/example_dags/subdags/*.log
