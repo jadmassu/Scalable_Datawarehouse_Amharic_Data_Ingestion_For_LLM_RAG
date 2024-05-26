@@ -225,32 +225,23 @@ services:
   # or by explicitly targeted on the command line e.g. docker-compose up flower.
   # See: https://docs.docker.com/compose/profiles/
   
-  airflow-collection:
-      build:
-        context: .
-        dockerfile: Dockerfile.collection
-      ports:
-        - "8080:8080"
-      volumes:
-        - ./dags:/opt/airflow/dags
-        - ./api/controllers:/opt/airflow/api/controllers
-      environment:
-        - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-        - AIRFLOW__CORE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
+  ingestion:
+    build:
+      context: .
+      dockerfile: Dockerfile.ingestion
+    environment:
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      NEWS_SCRAPER_URL: ${NEWS_SCRAPER_URL}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - airflow
 
-  airflow-cleaning:
-      build:
-        context: .
-        dockerfile: Dockerfile.cleaning
-      ports:
-        - "8081:8080"
-      volumes:
-        - ./dags:/opt/airflow/dags
-        - ./api/controllers:/opt/airflow/api/controllers
-        - ./scripts:/opt/airflow/scripts
-      environment:
-        - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-        - AIRFLOW__CORE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
 
 networks:
   airflow:
