@@ -251,6 +251,15 @@ services:
       environment:
         - AIRFLOW__CORE__EXECUTOR=LocalExecutor
         - AIRFLOW__CORE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
+        
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - '9090:9090'      
 
 networks:
   airflow:
