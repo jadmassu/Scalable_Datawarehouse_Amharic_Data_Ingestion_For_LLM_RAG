@@ -4,3 +4,10 @@ pandas
 sqlalchemy
 psycopg2
 langdetect
+
+
+
+#backend requirements 
+fastapi
+python-dotenv
+

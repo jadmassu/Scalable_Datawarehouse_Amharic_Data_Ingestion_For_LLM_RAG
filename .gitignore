@@ -1,5 +1,11 @@
 __pycache__/
 nlp/**
+.env
+data/clean/cleaned_data.csv
+/venv
+
+__pycache__/
+nlp/**
 data/clean/cleaned_data.csv
 
 # Byte-compiled / optimized / DLL files

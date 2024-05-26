@@ -1,18 +1,10 @@
-
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import  FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-from  models.base import Database
-from controllers  import data_controller
-import os,sys
+from routers import article_router
+from routers import telegram_article_router
+import uvicorn
+from models.database import create_all_tables
 
-import view_model.data_vm as data_vm
-
-from dotenv import load_dotenv
-
-load_dotenv()
-rpath = os.path.abspath('../api')
-SQLALCHEMY_DATABASE_URL = os.getenv('DB_CONNECTION_STRING')
 
 app = FastAPI(
         title="Amharic data integration for LLM",
@@ -28,26 +20,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+#Create tables
+create_all_tables()
+
+app.include_router(article_router.router)
+app.include_router(telegram_article_router.router)
 
 
-database = Database(SQLALCHEMY_DATABASE_URL)
-
-
-
-
-@app.post("/data/", response_model=data_vm.DataCreateVM)
-def create_data(data:data_vm.DataCreateVM, db: Session = Depends(database.get_db)):
-    db_user =  data_controller.create_data(db,  data = data)
-    return db_user
-
+if __name__ == "__main__":
     
-@app.post("/data/search", response_model=list[data_vm.DataVM])
-async def search_data(search_request: data_vm.DataSearch, db: Session = Depends(database.get_db)):
-    query = search_request.query
-    result = data_controller.search_data(db,query)
-    return result
-
-@app.get("/data/get", response_model=list[data_vm.DataCreateVM])
-def get_data(db: Session = Depends(database.get_db) ):
-    db_user =  data_controller.get_data(db)
-    return db_user
+    uvicorn.run(app, host="0.0.0.0", port=8000)
