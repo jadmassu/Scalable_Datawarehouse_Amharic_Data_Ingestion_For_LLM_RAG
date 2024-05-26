@@ -2,9 +2,10 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 from airflow.models import Variable
-from api.controllers.data_controller import create_data, get_news
 from airflow.utils.dates import days_ago
+from api.controllers.article_controller import create_data, get_news
 import logging
+
 
 # Set default arguments for the DAG
 default_args = {

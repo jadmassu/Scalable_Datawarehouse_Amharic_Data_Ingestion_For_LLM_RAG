@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 from airflow.models import Variable
-from api.controllers.data_controller import create_data, get_news
+from api.controllers.article_controller import create_data, get_news
 from scripts.clean_data import DataCleaner
 from airflow.utils.dates import days_ago
 import logging
