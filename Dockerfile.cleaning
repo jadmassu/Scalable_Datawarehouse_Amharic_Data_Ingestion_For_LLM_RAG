@@ -8,9 +8,13 @@ RUN pip install --no-cache-dir \
     nlp-utils
 
 COPY ./dags/data_processing.py /opt/airflow/dags/
+COPY ./api /opt/airflow/api/
+
 
 USER root
 RUN chmod -R 755 /opt/airflow/dags
+RUN chmod -R 755 /opt/airflow/api
+
 USER airflow
 
 
