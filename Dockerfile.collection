@@ -20,6 +20,7 @@ COPY api/controllers /opt/airflow/api/controllers
 RUN chmod -R 755 /opt/airflow/dags /opt/airflow/api
 
 # Set environment variables (optional, for Airflow configuration)
+ENV PYTHONPATH="/project_root"
 ENV AIRFLOW__CORE__EXECUTOR=LocalExecutor
 ENV AIRFLOW__CORE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
 
