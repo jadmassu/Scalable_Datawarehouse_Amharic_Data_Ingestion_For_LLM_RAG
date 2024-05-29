@@ -10,14 +10,21 @@ rpath = os.path.abspath('../api')
 
 
 
-username = os.getenv("POSTGRES_USER")
-password = os.getenv("POSTGRES_PASSWORD")
-host = os.getenv("POSTGRES_HOST")
-port = os.getenv("POSTGRES_PORT")
-database = os.getenv("POSTGRES_DB")
+# username = os.getenv("POSTGRES_USER")
+# password = os.getenv("POSTGRES_PASSWORD")
+# host = os.getenv("POSTGRES_HOST")
+# port = os.getenv("POSTGRES_PORT")
+# database = os.getenv("POSTGRES_DB")
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@db:{port}/{database}"
-# SQLALCHEMY_DATABASE_URL = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}/{POSTGRES_DB}"
+username = os.getenv("DB_USERNAME")
+password = os.getenv("DB_PASSWORD")
+host = os.getenv("DB_HOST")
+port = os.getenv("DB_PORT")
+database = os.getenv("DB_DATABASE")
+
+
+# SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@db:{port}/{database}"
+SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@{host}/{database}"
 
 
 engine = create_engine(
